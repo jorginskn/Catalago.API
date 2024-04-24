@@ -27,8 +27,8 @@ namespace APICatalago.Controllers
             return products;
         }
 
-        [HttpGet("{id:int}")]
-        public ActionResult <Product> GetProductById(int id)
+        [HttpGet("{id:int}", Name = "ObterProduto")]
+        public ActionResult<Product> GetProductById(int id )
         {
             var product = _context.Products.FirstOrDefault(product => product.ProductId == id);
             if (product is null)
@@ -36,6 +36,20 @@ namespace APICatalago.Controllers
                 return NotFound("Produto não encontrado");
             }
             return product;
+        }
+
+        [HttpPost]
+        public ActionResult InsertProduct(Product product)
+        {
+            if (product is null)
+            {
+                return BadRequest();
+            }
+
+            _context.Add(product);
+            _context.SaveChanges();
+
+            return new CreatedAtRouteResult("ObterProduto", new { id = product.ProductId }, product);
         }
     }
 }
