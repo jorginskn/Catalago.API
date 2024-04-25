@@ -2,6 +2,7 @@
 using APICatalago.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace APICatalago.Controllers
 {
@@ -28,7 +29,7 @@ namespace APICatalago.Controllers
         }
 
         [HttpGet("{id:int}", Name = "ObterProduto")]
-        public ActionResult<Product> GetProductById(int id )
+        public ActionResult<Product> GetProductById(int id)
         {
             var product = _context.Products.FirstOrDefault(product => product.ProductId == id);
             if (product is null)
@@ -48,8 +49,32 @@ namespace APICatalago.Controllers
 
             _context.Add(product);
             _context.SaveChanges();
-
             return new CreatedAtRouteResult("ObterProduto", new { id = product.ProductId }, product);
+        }
+
+        [HttpPut("{id:int}")]
+        public ActionResult UpdateProduct(int id, Product product)
+        {
+            if (id != product.ProductId)
+            {
+                return BadRequest();
+            }
+            _context.Entry(product).State = EntityState.Modified;
+            _context.SaveChanges();
+            return Ok(product);
+        }
+
+        [HttpDelete("{id:int}")]
+        public ActionResult DeleteProduct(int id)
+        {
+            var product = _context.Products.FirstOrDefault(product => product.ProductId == id);
+            if (product is null)
+            {
+                return NotFound("Produto não localizado...");
+            }
+            _context.Remove(product);
+            _context.SaveChanges();
+            return Ok(product); 
         }
     }
 }
