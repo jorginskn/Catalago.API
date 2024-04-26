@@ -2,6 +2,7 @@
 using APICatalago.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace APICatalago.Controllers
 {
@@ -18,23 +19,46 @@ namespace APICatalago.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Category>> GetCategories()
         {
-            var categories = _context.Categories.ToList();
-            if (categories is null)
+            try
             {
-                return NotFound("Categorias não foram encontradas");
+                var categories = _context.Categories.AsNoTracking().ToList();
+                if (categories is null)
+                {
+                    return NotFound("Categorias não foram encontradas");
+                }
+                return categories;
             }
-            return categories;
+            catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um problema ao tratar a sua solicitação");
+            }
+
         }
 
         [HttpGet("{id:int}", Name = "ObterCategoria")]
         public ActionResult<Category> GetCategoryById(int id)
         {
-            var category = _context.Categories.FirstOrDefault(category => category.CategoryId == id);
-            if (category is null)
+            try
             {
-                return NotFound("Categoria não encontrada");
+                var category = _context.Categories.FirstOrDefault(category => category.CategoryId == id);
+                if (category is null)
+                {
+                    return NotFound("Categoria não encontrada");
+                }
+                return category;
             }
-            return category;
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um problema ao tratar a sua solicitação");
+            }
+
+        }
+
+        [HttpGet("product")]
+        public ActionResult<IEnumerable<Category>> GetCategoriesAndProducts()
+        {
+            return _context.Categories.Include(p => p.Products).ToList();
         }
 
         [HttpPost]
@@ -49,5 +73,28 @@ namespace APICatalago.Controllers
             return new CreatedAtRouteResult("ObterCategoria", new { id = category.CategoryId }, category);
         }
 
+        [HttpPut]
+        public ActionResult UpdateCategory(int id, Category category)
+        {
+            if (id != category.CategoryId)
+            {
+                return BadRequest();
+            }
+            _context.Entry(category).State = EntityState.Modified;
+            _context.SaveChanges();
+            return Ok(category);
+        }
+        [HttpDelete]
+        public ActionResult DeleteCategory(int id)
+        {
+            var category = _context.Categories.FirstOrDefault(category => category.CategoryId == id);
+            if (category is null)
+            {
+                return NotFound("Categoria não encontrada");
+            }
+            _context.Remove(category);
+            _context.SaveChanges();
+            return Ok(category);
+        }
     }
 }
