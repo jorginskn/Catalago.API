@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace APICatalago.Models
 {
@@ -25,6 +27,8 @@ namespace APICatalago.Models
         public float Stock { get; set; }
         public DateTime CreateOn { get; set; }
         public int CategoryId { get; set; }
+
+        [System.Text.Json.Serialization.JsonIgnore]
         public Category? Category { get; set; }
 
     }
