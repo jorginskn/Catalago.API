@@ -2,6 +2,7 @@ using APICatalago.Data;
 using APICatalago.Extensions;
 using APICatalago.Filters;
 using APICatalago.Logging;
+using APICatalago.Repositories;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,13 +22,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSqlServer<AppDbContext>(builder.Configuration["ConnectionStrings:DefaultConnection"]);
 builder.Services.AddScoped<ApiLoggingFilter>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Logging.AddProvider(new CustomLoggerProvider(new CustomLoggerProviderConfiguration
 {
     LogLevel = LogLevel.Information,
 }));
 
 
- 
+
 
 var app = builder.Build();
 
