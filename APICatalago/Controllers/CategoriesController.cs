@@ -1,6 +1,9 @@
 ﻿using APICatalago.Data;
+using APICatalago.Filters;
 using APICatalago.Models;
+using APICatalago.Repositories;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,30 +13,27 @@ namespace APICatalago.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        public CategoriesController(AppDbContext context)
+        private readonly ICategoryRepository _repository;
+        private readonly ILogger _logger;
+        public CategoriesController(ICategoryRepository repository, ILogger<CategoriesController> logger)
         {
-            _context = context;
+            _repository = repository;
+            _logger = logger;
         }
 
         [HttpGet]
+        [ServiceFilter(typeof(ApiLoggingFilter))]
         public ActionResult<IEnumerable<Category>> GetCategories()
         {
             try
             {
-                var categories = _context.Categories.AsNoTracking().ToList();
-                if (categories is null)
-                {
-                    return NotFound("Categorias não foram encontradas");
-                }
+                var categories = _repository.GetCategories().ToList();
                 return categories;
             }
             catch (Exception)
             {
-
                 return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um problema ao tratar a sua solicitação");
             }
-
         }
 
         [HttpGet("{id:int}", Name = "ObterCategoria")]
@@ -41,12 +41,12 @@ namespace APICatalago.Controllers
         {
             try
             {
-                var category = _context.Categories.FirstOrDefault(category => category.CategoryId == id);
+                var category = _repository.GetCategoryById(id);
                 if (category is null)
                 {
                     return NotFound("Categoria não encontrada");
                 }
-                return category;
+                return Ok(category);
             }
             catch (Exception)
             {
@@ -55,10 +55,18 @@ namespace APICatalago.Controllers
 
         }
 
-        [HttpGet("product")]
+        [HttpGet("products")]
         public ActionResult<IEnumerable<Category>> GetCategoriesAndProducts()
         {
-            return _context.Categories.Include(p => p.Products).ToList();
+            try
+            {
+                return _repository.GetCategoriesAndProducts();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
 
         [HttpPost]
@@ -66,11 +74,11 @@ namespace APICatalago.Controllers
         {
             if (category is null)
             {
+                _logger.LogWarning($"Dados invalidos...");
                 return BadRequest();
             }
-            _context.Categories.Add(category);
-            _context.SaveChanges();
-            return new CreatedAtRouteResult("ObterCategoria", new { id = category.CategoryId }, category);
+            var categoryCreated = _repository.InsertCategory(category);
+            return new CreatedAtRouteResult("ObterCategoria", new { id = category.CategoryId }, categoryCreated);
         }
 
         [HttpPut]
@@ -78,22 +86,22 @@ namespace APICatalago.Controllers
         {
             if (id != category.CategoryId)
             {
+                _logger.LogWarning($"Dados invalidos...");
                 return BadRequest();
             }
-            _context.Entry(category).State = EntityState.Modified;
-            _context.SaveChanges();
+            _repository.UpdateCategory(category);
             return Ok(category);
         }
+
         [HttpDelete]
         public ActionResult DeleteCategory(int id)
         {
-            var category = _context.Categories.FirstOrDefault(category => category.CategoryId == id);
+            var category = _repository.GetCategoryById(id);
             if (category is null)
             {
                 return NotFound("Categoria não encontrada");
             }
-            _context.Remove(category);
-            _context.SaveChanges();
+            _repository.DeleteCategory(id);
             return Ok(category);
         }
     }
