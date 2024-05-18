@@ -60,7 +60,7 @@ namespace APICatalago.Controllers
         {
             try
             {
-                return _repository.GetCategoriesAndProducts();
+                return _repository.GetCategoriesAndProducts().ToList();
             }
             catch (Exception)
             {

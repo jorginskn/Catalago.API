@@ -7,7 +7,7 @@ namespace APICatalago.Repositories
     {
         public IEnumerable<Category> GetCategories();
         public Category GetCategoryById(int id);
-        ActionResult<IEnumerable<Category>> GetCategoriesAndProducts();
+        IEnumerable<Category>GetCategoriesAndProducts();
         Category InsertCategory(Category category);
         Category UpdateCategory(Category category);
         Category DeleteCategory(int id);

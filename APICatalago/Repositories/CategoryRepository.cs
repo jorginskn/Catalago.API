@@ -60,7 +60,7 @@ namespace APICatalago.Repositories
             return category;
         }
 
-        public ActionResult<IEnumerable<Category>> GetCategoriesAndProducts()
+        public IEnumerable<Category> GetCategoriesAndProducts()
         {
             return _context.Categories.Include(c => c.Products).ToList();
         }

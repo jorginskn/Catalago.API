@@ -1,5 +1,7 @@
 ﻿using APICatalago.Data;
+using APICatalago.Filters;
 using APICatalago.Models;
+using APICatalago.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,33 +12,53 @@ namespace APICatalago.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IProductRepository _repository;
+        private readonly ILogger _logger;
 
-        public ProductsController(AppDbContext context)
+        public ProductsController(IProductRepository repository, ILogger<ProductsController> logger)
         {
-            _context = context;
+            _repository = repository;
+            _logger = logger;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Product>> GetProduct()
+        [ServiceFilter(typeof(ApiLoggingFilter))]
+        public ActionResult<IEnumerable<Product>> GetProducts()
         {
-            var products = _context.Products.AsNoTracking().ToList();
-            if (products is null)
+            try
             {
-                return NotFound("Produtos não encontrados");
+                var products = _repository.GetProducts();
+                if (products is null)
+                {
+                    return NotFound("Produtos não encontrados");
+                }
+                return Ok(products);
             }
-            return products;
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         [HttpGet("{id:int}", Name = "ObterProduto")]
         public ActionResult<Product> GetProductById(int id)
         {
-            var product = _context.Products.FirstOrDefault(product => product.ProductId == id);
-            if (product is null)
+            try
             {
-                return NotFound("Produto não encontrado");
+                var product = _repository.GetProductById(id);
+                if (product is null)
+                {
+                    return NotFound("Produto não encontrado");
+                }
+                return Ok(product);
             }
-            return product;
+            catch (Exception)
+            {
+                throw;
+            }
+
+
         }
 
         [HttpPost]
@@ -44,37 +66,37 @@ namespace APICatalago.Controllers
         {
             if (product is null)
             {
+                _logger.LogWarning("Dados invalidos");
                 return BadRequest();
             }
+            var productCreated = _repository.InsertProduct(product);
+            return new CreatedAtRouteResult("ObterProduto", new { id = product.ProductId }, productCreated);
 
-            _context.Add(product);
-            _context.SaveChanges();
-            return new CreatedAtRouteResult("ObterProduto", new { id = product.ProductId }, product);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult UpdateProduct(int id, Product product)
+        public ActionResult<Product> UpdateProduct(int id, Product product)
         {
+
             if (id != product.ProductId)
             {
+                _logger.LogWarning($"Dados invalidos...");
                 return BadRequest();
             }
-            _context.Entry(product).State = EntityState.Modified;
-            _context.SaveChanges();
+            _repository.UpdateProduct(product);
             return Ok(product);
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult DeleteProduct(int id)
+        public ActionResult<Product> DeleteProduct(int id)
         {
-            var product = _context.Products.FirstOrDefault(product => product.ProductId == id);
+            var product = _repository.GetProductById(id);
             if (product is null)
             {
                 return NotFound("Produto não localizado...");
             }
-            _context.Remove(product);
-            _context.SaveChanges();
-            return Ok(product); 
+            _repository.DeleteProduct(id);
+            return Ok(product);
         }
     }
 }
