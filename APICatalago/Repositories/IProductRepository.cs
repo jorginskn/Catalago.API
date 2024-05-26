@@ -2,12 +2,8 @@
 
 namespace APICatalago.Repositories
 {
-    public interface IProductRepository
+    public interface IProductRepository : IRepository<Product>
     {
-        IEnumerable<Product> GetProducts();
-        Product GetProductById(int id);
-        Product InsertProduct(Product product);
-        Product UpdateProduct(Product product);
-        Product DeleteProduct(int id);
+        IEnumerable<Product> GetProductsByCategory(int id);
     }
 }
