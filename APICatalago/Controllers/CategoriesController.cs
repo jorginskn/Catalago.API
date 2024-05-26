@@ -81,7 +81,7 @@ namespace APICatalago.Controllers
             return new CreatedAtRouteResult("ObterCategoria", new { id = category.CategoryId }, categoryCreated);
         }
 
-        [HttpPut]
+        [HttpPut("{id:int}")]
         public ActionResult UpdateCategory(int id, Category category)
         {
             if (id != category.CategoryId)
@@ -93,7 +93,7 @@ namespace APICatalago.Controllers
             return Ok(category);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id:int}")]
         public ActionResult DeleteCategory(int id)
         {
             var category = _repository.GetCategoryById(id);

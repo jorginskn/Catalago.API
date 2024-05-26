@@ -1,11 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace APICatalago.Models
 {
     [Table("Categories")]
     public class Category
     {
+        public Category()
+        {
+            Products = new Collection<Product>();
+        }
+
         [Key]
         public int CategoryId { get; set; }
 
@@ -16,6 +23,7 @@ namespace APICatalago.Models
         [Required]
         [StringLength(300)]
         public string? ImageUrl { get; set; }
-        public Product Products { get; set; } = new Product();
+        [JsonIgnore]
+        public ICollection<Product>? Products { get; set; }
     }
 }
