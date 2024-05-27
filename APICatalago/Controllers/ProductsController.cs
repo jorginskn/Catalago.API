@@ -12,14 +12,12 @@ namespace APICatalago.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductRepository _productRepository;
-        private readonly IRepository<Product> _repository;
+        
         private readonly ILogger _logger;
-
-        public ProductsController(IProductRepository repository, ILogger<ProductsController> logger,IProductRepository productRepository)
+        private readonly IUnitOfWork _uof;
+        public ProductsController(  ILogger<ProductsController> logger, IUnitOfWork unitOfWork)
         {
-            _repository = repository;
-            _productRepository= productRepository;
+            _uof= unitOfWork;
             _logger = logger;
         }
 
@@ -29,7 +27,7 @@ namespace APICatalago.Controllers
         {
             try
             {
-                var products = _repository.GetAll();
+                var products = _uof.ProductRepository.GetAll();
                 if (products is null)
                 {
                     return NotFound("Produtos não encontrados");
@@ -48,7 +46,7 @@ namespace APICatalago.Controllers
         {
             try
             {
-                var product = _repository.Get(p => p.ProductId == id);
+                var product = _uof.ProductRepository.Get(p => p.ProductId == id);
                 if (product is null)
                 {
                     return NotFound("Produto não encontrado");
@@ -64,7 +62,7 @@ namespace APICatalago.Controllers
         [HttpGet("Category/{id}")]
         public ActionResult<IEnumerable<Product>> GetProductsByCategory(int id)
         {
-            var product = _productRepository.GetProductsByCategory(id);
+            var product = _uof.ProductRepository.GetProductsByCategory(id);
             if (product is null)
             {
                 return NotFound();
@@ -80,7 +78,8 @@ namespace APICatalago.Controllers
                 _logger.LogWarning("Dados invalidos");
                 return BadRequest();
             }
-            var productCreated = _repository.Create(product);
+            var productCreated = _uof.ProductRepository.Create(product);
+            _uof.commit();
             return new CreatedAtRouteResult("ObterProduto", new { id = product.ProductId }, productCreated);
 
         }
@@ -94,19 +93,21 @@ namespace APICatalago.Controllers
                 _logger.LogWarning($"Dados invalidos...");
                 return BadRequest();
             }
-            var updatedProduct = _repository.Update(product);
+            var updatedProduct = _uof.ProductRepository.Update(product);
+            _uof.commit();
             return Ok(updatedProduct);
         }
 
         [HttpDelete("{id:int}")]
         public ActionResult<Product> DeleteProduct(int id)
         {
-            var product = _repository.Get(p => p.ProductId == id);
+            var product = _uof.ProductRepository.Get(p => p.ProductId == id);
             if (product is null)
             {
                 return NotFound("Produto não localizado...");
             }
-            _repository.Delete(product);
+            _uof.ProductRepository.Delete(product);
+            _uof.commit();
             return Ok(product);
         }
 
