@@ -1,4 +1,5 @@
 ﻿using APICatalago.Data;
+using APICatalago.DTOS;
 using APICatalago.Filters;
 using APICatalago.Models;
 using APICatalago.Repositories;
@@ -17,18 +18,33 @@ namespace APICatalago.Controllers
         private readonly ILogger _logger;
         public CategoriesController(ILogger<CategoriesController> logger, IUnitOfWork unitOfWork)
         {
-             _logger = logger;
+            _logger = logger;
             _uof = unitOfWork;
         }
 
         [HttpGet]
         [ServiceFilter(typeof(ApiLoggingFilter))]
-        public ActionResult<IEnumerable<Category>> GetCategories()
+        public ActionResult<IEnumerable<CategoryDTO>> GetCategories()
         {
             try
             {
                 var categories = _uof.CategoryRepository.GetAll();
-                return Ok(categories);
+                if (categories is null)
+                {
+                    return NotFound();
+                }
+                var categoriesDTO = new List<CategoryDTO>();
+                foreach (var category in categories)
+                {
+                    var categoryDTO = new CategoryDTO()
+                    {
+                        CategoryId = category.CategoryId,
+                        Name = category.Name,
+                        ImageUrl = category.ImageUrl,
+                    };
+                    categoriesDTO.Add(categoryDTO);
+                }
+                return Ok(categoriesDTO);
             }
             catch (Exception)
             {
@@ -37,16 +53,23 @@ namespace APICatalago.Controllers
         }
 
         [HttpGet("{id:int}", Name = "ObterCategoria")]
-        public ActionResult<Category> GetCategoryById(int id)
+        public ActionResult<CategoryDTO> GetCategoryById(int id)
         {
             try
             {
-                var category = _uof.CategoryRepository.Get(c => c.CategoryId== id);
+                var category = _uof.CategoryRepository.Get(c => c.CategoryId == id);
                 if (category is null)
                 {
                     return NotFound("Categoria não encontrada");
                 }
-                return Ok(category);
+                var CategoryDTO = new CategoryDTO()
+                {
+                    CategoryId = category.CategoryId,
+                    Name = category.Name,
+                    ImageUrl = category.ImageUrl,
+                };
+
+                return Ok(CategoryDTO);
             }
             catch (Exception)
             {
@@ -57,42 +80,79 @@ namespace APICatalago.Controllers
 
 
         [HttpPost]
-        public ActionResult InsertCategory(Category category)
+        public ActionResult<CategoryDTO> InsertCategory(CategoryDTO categoryDTO)
         {
-            if (category is null)
+            if (categoryDTO is null)
             {
                 _logger.LogWarning($"Dados invalidos...");
                 return BadRequest();
             }
+            var category = new Category()
+            {
+                CategoryId = categoryDTO.CategoryId,
+                Name = categoryDTO.Name,
+                ImageUrl = categoryDTO.ImageUrl,
+            };
+
             var categoryCreated = _uof.CategoryRepository.Create(category);
             _uof.commit();
-            return new CreatedAtRouteResult("ObterCategoria", new { id = category.CategoryId }, categoryCreated);
+
+            var newCategoryDTO = new CategoryDTO()
+            {
+                CategoryId = categoryCreated.CategoryId,
+                Name = categoryCreated.Name,
+                ImageUrl = categoryCreated.ImageUrl,
+            };
+
+            return new CreatedAtRouteResult("ObterCategoria", new { id = newCategoryDTO.CategoryId }, newCategoryDTO);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult UpdateCategory(int id, Category category)
+        public ActionResult<CategoryDTO> UpdateCategory(int id, CategoryDTO categoryDTO)
         {
-            if (id != category.CategoryId)
+            if (id != categoryDTO.CategoryId)
             {
                 _logger.LogWarning($"Dados invalidos...");
                 return BadRequest();
             }
-            _uof.CategoryRepository.Update(category);
+            var category = new Category()
+            {
+                CategoryId = categoryDTO.CategoryId,
+                Name = categoryDTO.Name,
+                ImageUrl = categoryDTO.ImageUrl,
+            };
+
+            var categoryUpdate = _uof.CategoryRepository.Update(category);
             _uof.commit();
-            return Ok(category);
+            var CategoryUpdatedDTO = new CategoryDTO()
+            {
+                CategoryId = categoryUpdate.CategoryId,
+                Name = categoryUpdate.Name,
+                ImageUrl = categoryUpdate.ImageUrl,
+            };
+
+            return Ok(CategoryUpdatedDTO);
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult DeleteCategory(int id)
+        public ActionResult<CategoryDTO> DeleteCategory(int id)
         {
             var category = _uof.CategoryRepository.Get(c => c.CategoryId == id);
+
+            var excludedCategory = new CategoryDTO()
+            {
+                CategoryId = category.CategoryId,
+                Name = category.Name,
+                ImageUrl = category.ImageUrl,
+            };
+
             if (category is null)
             {
                 return NotFound("Categoria não encontrada");
             }
             _uof.CategoryRepository.Delete(category);
             _uof.commit();
-            return Ok(category);
+            return Ok(excludedCategory);
         }
     }
 }
