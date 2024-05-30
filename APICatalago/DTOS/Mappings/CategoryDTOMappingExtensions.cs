@@ -19,6 +19,7 @@ namespace APICatalago.DTOS.Mappings
                 ImageUrl = category.ImageUrl
             };
         }
+
         public static Category? toCategory(this CategoryDTO categoryDTO)
         {
             if (categoryDTO is null)

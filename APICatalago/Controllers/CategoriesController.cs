@@ -1,5 +1,6 @@
 ﻿using APICatalago.Data;
 using APICatalago.DTOS;
+using APICatalago.DTOS.Mappings;
 using APICatalago.Filters;
 using APICatalago.Models;
 using APICatalago.Repositories;
@@ -33,17 +34,8 @@ namespace APICatalago.Controllers
                 {
                     return NotFound();
                 }
-                var categoriesDTO = new List<CategoryDTO>();
-                foreach (var category in categories)
-                {
-                    var categoryDTO = new CategoryDTO()
-                    {
-                        CategoryId = category.CategoryId,
-                        Name = category.Name,
-                        ImageUrl = category.ImageUrl,
-                    };
-                    categoriesDTO.Add(categoryDTO);
-                }
+
+                var categoriesDTO = categories.toCategorytDTOList();
                 return Ok(categoriesDTO);
             }
             catch (Exception)
@@ -62,14 +54,10 @@ namespace APICatalago.Controllers
                 {
                     return NotFound("Categoria não encontrada");
                 }
-                var CategoryDTO = new CategoryDTO()
-                {
-                    CategoryId = category.CategoryId,
-                    Name = category.Name,
-                    ImageUrl = category.ImageUrl,
-                };
 
-                return Ok(CategoryDTO);
+                var categoryDTO = category.ToCategoryDTO();
+
+                return Ok(categoryDTO);
             }
             catch (Exception)
             {
@@ -87,22 +75,15 @@ namespace APICatalago.Controllers
                 _logger.LogWarning($"Dados invalidos...");
                 return BadRequest();
             }
-            var category = new Category()
-            {
-                CategoryId = categoryDTO.CategoryId,
-                Name = categoryDTO.Name,
-                ImageUrl = categoryDTO.ImageUrl,
-            };
+
+            var category = categoryDTO.toCategory();
 
             var categoryCreated = _uof.CategoryRepository.Create(category);
             _uof.commit();
 
-            var newCategoryDTO = new CategoryDTO()
-            {
-                CategoryId = categoryCreated.CategoryId,
-                Name = categoryCreated.Name,
-                ImageUrl = categoryCreated.ImageUrl,
-            };
+
+            var newCategoryDTO = categoryCreated.ToCategoryDTO();
+
 
             return new CreatedAtRouteResult("ObterCategoria", new { id = newCategoryDTO.CategoryId }, newCategoryDTO);
         }
@@ -115,44 +96,27 @@ namespace APICatalago.Controllers
                 _logger.LogWarning($"Dados invalidos...");
                 return BadRequest();
             }
-            var category = new Category()
-            {
-                CategoryId = categoryDTO.CategoryId,
-                Name = categoryDTO.Name,
-                ImageUrl = categoryDTO.ImageUrl,
-            };
 
+            var category = categoryDTO.toCategory();
             var categoryUpdate = _uof.CategoryRepository.Update(category);
             _uof.commit();
-            var CategoryUpdatedDTO = new CategoryDTO()
-            {
-                CategoryId = categoryUpdate.CategoryId,
-                Name = categoryUpdate.Name,
-                ImageUrl = categoryUpdate.ImageUrl,
-            };
+            var categoryUpdatedDTO = categoryUpdate.ToCategoryDTO();
 
-            return Ok(CategoryUpdatedDTO);
+            return Ok(categoryUpdatedDTO);
         }
 
         [HttpDelete("{id:int}")]
         public ActionResult<CategoryDTO> DeleteCategory(int id)
         {
             var category = _uof.CategoryRepository.Get(c => c.CategoryId == id);
-
-            var excludedCategory = new CategoryDTO()
-            {
-                CategoryId = category.CategoryId,
-                Name = category.Name,
-                ImageUrl = category.ImageUrl,
-            };
-
             if (category is null)
             {
                 return NotFound("Categoria não encontrada");
             }
+            var excludedCategoryDTO = category.ToCategoryDTO();
             _uof.CategoryRepository.Delete(category);
             _uof.commit();
-            return Ok(excludedCategory);
+            return Ok(excludedCategoryDTO);
         }
     }
 }
