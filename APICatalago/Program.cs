@@ -1,4 +1,5 @@
 using APICatalago.Data;
+using APICatalago.DTOS.Mappings;
 using APICatalago.Extensions;
 using APICatalago.Filters;
 using APICatalago.Logging;
@@ -26,6 +27,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddAutoMapper(typeof(ProductDTOMappingProfile));
 builder.Logging.AddProvider(new CustomLoggerProvider(new CustomLoggerProviderConfiguration
 {
     LogLevel = LogLevel.Information,

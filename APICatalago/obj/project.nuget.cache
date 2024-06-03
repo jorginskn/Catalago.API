@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "LBIlt8QrA+DyjmPdBVOWW4smHOpbzxrvi6+eEGtQ3DHlzRsXmwe9Qm68tmS0HcnBa7ZyRP2LZpxxUeSc8vEUDQ==",
+  "dgSpecHash": "UrP4wlnFdAJ+2mVaO+rn+LlIpvYMniu3e/QVl6HcG74zw5erPmRFhqawX4o6RzI4z+lk+lhNqbWtmr6Zhpx/gg==",
   "success": true,
   "projectFilePath": "C:\\Projetos\\APICatalago\\APICatalago\\APICatalago.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Jorge\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\Jorge\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\Jorge\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
     "C:\\Users\\Jorge\\.nuget\\packages\\humanizer\\2.14.1\\humanizer.2.14.1.nupkg.sha512",
