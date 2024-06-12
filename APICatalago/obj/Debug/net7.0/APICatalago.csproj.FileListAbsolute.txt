@@ -247,9 +247,10 @@ C:\Projetos\APICatalago\APICatalago\obj\Debug\net7.0\staticwebassets.pack.json
 C:\Projetos\APICatalago\APICatalago\obj\Debug\net7.0\staticwebassets.build.json
 C:\Projetos\APICatalago\APICatalago\obj\Debug\net7.0\staticwebassets.development.json
 C:\Projetos\APICatalago\APICatalago\obj\Debug\net7.0\scopedcss\bundle\APICatalago.styles.css
-C:\Projetos\APICatalago\APICatalago\obj\Debug\net7.0\APICatalago.csproj.CopyComplete
 C:\Projetos\APICatalago\APICatalago\obj\Debug\net7.0\APICatalago.dll
 C:\Projetos\APICatalago\APICatalago\obj\Debug\net7.0\refint\APICatalago.dll
 C:\Projetos\APICatalago\APICatalago\obj\Debug\net7.0\APICatalago.pdb
 C:\Projetos\APICatalago\APICatalago\obj\Debug\net7.0\APICatalago.genruntimeconfig.cache
 C:\Projetos\APICatalago\APICatalago\obj\Debug\net7.0\ref\APICatalago.dll
+C:\Projetos\APICatalago\APICatalago\obj\Debug\net7.0\APICatalago.sourcelink.json
+C:\Projetos\APICatalago\APICatalago\obj\Debug\net7.0\APICatal.C7779411.Up2Date

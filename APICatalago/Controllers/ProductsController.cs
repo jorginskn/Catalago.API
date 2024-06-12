@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APICatalago.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
@@ -38,7 +38,7 @@ namespace APICatalago.Controllers
                 }
 
                 // Mapeia a coleção de Product para a coleção de ProductDTO
-                var productsDTO = _mapper.Map<IEnumerable<ProductDTO>>(products);
+                var productsDTO = _mapper.Map<IEnumerable<ProductDTO>>(products).ToList();
                 return Ok(productsDTO);
             }
             catch (Exception ex)

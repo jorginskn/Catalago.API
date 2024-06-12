@@ -16,6 +16,7 @@ namespace APICatalago.DTOS
         [StringLength(300)]
         public string? Description { get; set; }
         [Required]
+        public float Stock { get; set; }
         public decimal Price { get; set; }
         [Required]
         [StringLength(300)]
