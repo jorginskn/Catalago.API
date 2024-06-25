@@ -16,7 +16,7 @@ builder.Services.AddControllers(options =>
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    });
+    }).AddNewtonsoftJson();
 
 // Configuração de CORS para permitir todas as origens, métodos e cabeçalhos
 builder.Services.AddCors(options =>

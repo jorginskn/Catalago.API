@@ -2,9 +2,12 @@
 using APICatalago.DTOS;
 using APICatalago.Filters;
 using APICatalago.Models;
+using APICatalago.Pagination;
 using APICatalago.Repositories;
 using AutoMapper;
+using Azure;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -80,6 +83,18 @@ namespace APICatalago.Controllers
             return Ok(productsDTO);
         }
 
+        [HttpGet("pagination")]
+        public ActionResult<IEnumerable<ProductDTO>> GetProducts([FromQuery] ProductParameters productParameters)
+        {
+            var products = _uof.ProductRepository.GetProducts(productParameters);
+            if (products is null)
+            {
+                return NotFound();
+            }
+            var productsDTO = _mapper.Map<IEnumerable<ProductDTO>>(products);
+            return Ok(productsDTO);
+        }
+
         [HttpPost]
         public ActionResult<ProductDTO> InsertProduct(ProductDTO productDTO)
         {
@@ -94,6 +109,30 @@ namespace APICatalago.Controllers
             var productCreatedDTO = _mapper.Map<ProductDTO>(productCreated);
             return new CreatedAtRouteResult("ObterProduto", new { id = productCreatedDTO.ProductId }, productCreatedDTO);
 
+        }
+
+        [HttpPatch("{id:int}/UpdatePartial")]
+        public ActionResult<ProductDTOUpdateResponse> Patch(int id, JsonPatchDocument<ProductDTOUpdateRequest> patchProductDto)
+        {
+            if (patchProductDto is null || id <= 0)
+            {
+                return BadRequest();
+            }
+            var product = _uof.ProductRepository.Get(p => p.ProductId == id);
+            if (product is null)
+            {
+                return NotFound();
+            }
+            var productDTO = _mapper.Map<ProductDTOUpdateRequest>(product);
+            patchProductDto.ApplyTo(productDTO, ModelState);
+            if (!ModelState.IsValid || TryValidateModel(productDTO))
+            {
+                return BadRequest(ModelState);
+            }
+            _mapper.Map(productDTO, product);
+            _uof.ProductRepository.Update(product);
+            _uof.commit();
+            return Ok(_mapper.Map<ProductDTOUpdateResponse>(product));
         }
 
         [HttpPut("{id:int}")]
