@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace APICatalago.Controllers
 {
@@ -91,6 +92,17 @@ namespace APICatalago.Controllers
             {
                 return NotFound();
             }
+            var metadata = new
+            {
+                products.TotalCount,
+                products.PageSize,
+                products.CurrentPage,
+                products.TotalPages,
+                products.hasNext,
+                products.hasPrevious
+            };
+
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
             var productsDTO = _mapper.Map<IEnumerable<ProductDTO>>(products);
             return Ok(productsDTO);
         }

@@ -13,13 +13,21 @@ namespace APICatalago.Repositories
 
         }
 
-        public IEnumerable<Product> GetProducts(ProductParameters productParams)
+        // IEnumerable<Product> GetProducts(ProductParameters productParams)
+        // {
+        //   return GetAll()
+        //          .OrderBy(p => p.Name)
+        //           .Skip((productParams.PageNumber - 1) * productParams.PageSize)
+        //          .Take(productParams.PageSize).ToList() ;
+
+        // }
+
+        public PagedList<Product> GetProducts(ProductParameters productParams)
         {
-            return GetAll()
-                   .OrderBy(p => p.Name)
-                   .Skip((productParams.PageNumber - 1) * productParams.PageSize)
-                   .Take(productParams.PageSize).ToList() ;
-                     
+            var products = GetAll().OrderBy(p => p.ProductId).AsQueryable();
+            var productOrder = PagedList<Product>.ToPagedList(products, productParams.PageNumber, productParams.PageSize);
+            return productOrder;
+
         }
 
         public IEnumerable<Product> GetProductsByCategory(int id)
