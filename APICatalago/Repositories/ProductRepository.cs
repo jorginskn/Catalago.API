@@ -13,6 +13,28 @@ namespace APICatalago.Repositories
 
         }
 
+        public PagedList<Product> GetProductByPrice(ProductFilterPrice productFilterParams)
+        {
+            var products = GetAll().AsQueryable();
+            if (productFilterParams.Price.HasValue && !string.IsNullOrEmpty(productFilterParams.PriceCriterio))
+            {
+                if (productFilterParams.PriceCriterio.Equals("maior", StringComparison.OrdinalIgnoreCase))
+                {
+                    products = products.Where(p => p.Price > productFilterParams.Price);
+                }
+                else if (productFilterParams.PriceCriterio.Equals("menor", StringComparison.OrdinalIgnoreCase))
+                {
+                    products = products.Where(p => p.Price < productFilterParams.Price);
+                }
+                else if (productFilterParams.PriceCriterio.Equals("igual", StringComparison.OrdinalIgnoreCase))
+                {
+                    products = products.Where(p => p.Price == productFilterParams.Price);
+                }
+            }
+            var filteredProduct = PagedList<Product>.ToPagedList(products, productFilterParams.PageNumber, productFilterParams.PageSize);
+            return filteredProduct;
+        }
+
         // IEnumerable<Product> GetProducts(ProductParameters productParams)
         // {
         //   return GetAll()

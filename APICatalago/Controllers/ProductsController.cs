@@ -88,10 +88,19 @@ namespace APICatalago.Controllers
         public ActionResult<IEnumerable<ProductDTO>> GetProducts([FromQuery] ProductParameters productParameters)
         {
             var products = _uof.ProductRepository.GetProducts(productParameters);
-            if (products is null)
-            {
-                return NotFound();
-            }
+            return GetProducts(products);
+
+        }
+
+        [HttpGet("filter/price/pagination")]
+        public ActionResult<IEnumerable<ProductDTO>> GetProductByPrice([FromQuery] ProductFilterPrice productsFilterParams)
+        {
+            var products = _uof.ProductRepository.GetProductByPrice(productsFilterParams);
+            return GetProducts(products);
+        }
+
+        private ActionResult<IEnumerable<ProductDTO>> GetProducts(PagedList<Product>? products)
+        {
             var metadata = new
             {
                 products.TotalCount,
@@ -101,7 +110,6 @@ namespace APICatalago.Controllers
                 products.hasNext,
                 products.hasPrevious
             };
-
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
             var productsDTO = _mapper.Map<IEnumerable<ProductDTO>>(products);
             return Ok(productsDTO);
