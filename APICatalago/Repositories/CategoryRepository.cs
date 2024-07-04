@@ -22,5 +22,17 @@ namespace APICatalago.Repositories
             var orderedCategories = PagedList<Category>.ToPagedList(categories, categoriesParams.PageNumber, categoriesParams.PageSize);
             return orderedCategories;
         }
+
+        public PagedList<Category> GetCategoryByName(CategoryFilterName categoryParams)
+        {
+            var category = GetAll().AsQueryable();
+            if (!string.IsNullOrEmpty(categoryParams.Name))
+            {
+                category = category.Where(c => c.Name.Contains(categoryParams.Name));
+            }
+
+            var filteredCategory = PagedList<Category>.ToPagedList(category, categoryParams.PageNumber, categoryParams.PageSize);
+            return filteredCategory;
+        }
     }
 }

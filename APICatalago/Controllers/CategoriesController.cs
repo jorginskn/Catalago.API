@@ -3,6 +3,7 @@ using APICatalago.DTOS;
 using APICatalago.DTOS.Mappings;
 using APICatalago.Filters;
 using APICatalago.Models;
+using APICatalago.Pagination;
 using APICatalago.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -71,6 +72,11 @@ namespace APICatalago.Controllers
         public ActionResult<IEnumerable<CategoryDTO>> Get([FromQuery] CategoriesParameters categoriesParams)
         {
             var categories = _uof.CategoryRepository.GetCategories(categoriesParams);
+            return GetCategories(categories);
+        }
+
+        private ActionResult<IEnumerable<CategoryDTO>> GetCategories(PagedList<Category> categories)
+        {
             var metadata = new
             {
                 categories.TotalCount,
@@ -85,6 +91,12 @@ namespace APICatalago.Controllers
             return Ok(categoriesDTO);
         }
 
+        [HttpGet("filter/name/pagination")]
+        public ActionResult<IEnumerable<CategoryDTO>> GetCategoriesByName([FromQuery]CategoryFilterName categoryFilter)
+        {
+            var categories = _uof.CategoryRepository.GetCategoryByName(categoryFilter); 
+            return GetCategories(categories);
+        }
 
         [HttpPost]
         public ActionResult<CategoryDTO> InsertCategory(CategoryDTO categoryDTO)
