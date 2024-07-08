@@ -7,6 +7,7 @@ namespace APICatalago.Repositories
     {
         //IEnumerable<Product> GetProducts(ProductParameters productParams);
         PagedList<Product> GetProducts(ProductParameters productParams);
+        IQueryable<Product> GetProductsWithCategories();
         IEnumerable<Product> GetProductsByCategory(int id);
         public PagedList<Product> GetProductByPrice(ProductFilterPrice productFilterParams);
 

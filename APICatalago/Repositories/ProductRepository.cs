@@ -35,6 +35,12 @@ namespace APICatalago.Repositories
             return filteredProduct;
         }
 
+
+        public IQueryable<Product> GetProductsWithCategories()
+        {
+            var products = _context.Products.Include(p => p.Category).AsNoTracking().AsQueryable() ;          
+            return products;
+        }
         // IEnumerable<Product> GetProducts(ProductParameters productParams)
         // {
         //   return GetAll()

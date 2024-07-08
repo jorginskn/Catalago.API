@@ -83,6 +83,14 @@ namespace APICatalago.Controllers
             var productsDTO = _mapper.Map<IEnumerable<ProductDTO>>(product);
             return Ok(productsDTO);
         }
+        [HttpGet("categories")]
+        public ActionResult<IEnumerable<ProductDTO>> GetProductsWithCategories()
+        {
+            var product = _uof.ProductRepository.GetProductsWithCategories().ToList();
+            var productsDTO = _mapper.Map<IEnumerable<ProductDTO>>(product);
+            return Ok(productsDTO);
+
+        }
 
         [HttpGet("pagination")]
         public ActionResult<IEnumerable<ProductDTO>> GetProducts([FromQuery] ProductParameters productParameters)

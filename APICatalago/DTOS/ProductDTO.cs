@@ -22,5 +22,6 @@ namespace APICatalago.DTOS
         [StringLength(300)]
         public string? ImageUrl { get; set; }
         public int CategoryId { get; set; }
+        public string CategoryName { get; set; }
     }
 }
