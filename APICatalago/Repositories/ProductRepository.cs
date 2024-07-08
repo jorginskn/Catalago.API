@@ -36,7 +36,7 @@ namespace APICatalago.Repositories
         }
 
 
-        public IQueryable<Product> GetProductsWithCategories()
+        public IEnumerable<Product> GetProductsWithCategories()
         {
             var products = _context.Products.Include(p => p.Category).AsNoTracking().AsQueryable() ;          
             return products;
