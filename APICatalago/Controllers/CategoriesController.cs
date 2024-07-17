@@ -27,11 +27,11 @@ namespace APICatalago.Controllers
 
         [HttpGet]
         [ServiceFilter(typeof(ApiLoggingFilter))]
-        public ActionResult<IEnumerable<CategoryDTO>> GetCategories()
+        public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategories()
         {
             try
             {
-                var categories = _uof.CategoryRepository.GetAll();
+                var categories = await _uof.CategoryRepository.GetAllAsync();
                 if (categories is null)
                 {
                     return NotFound();
@@ -47,11 +47,11 @@ namespace APICatalago.Controllers
         }
 
         [HttpGet("{id:int}", Name = "ObterCategoria")]
-        public ActionResult<CategoryDTO> GetCategoryById(int id)
+        public async Task<ActionResult<CategoryDTO>> GetCategoryByIdAsync(int id)
         {
             try
             {
-                var category = _uof.CategoryRepository.Get(c => c.CategoryId == id);
+                var category = await _uof.CategoryRepository.GetAsync(c => c.CategoryId == id);
                 if (category is null)
                 {
                     return NotFound("Categoria não encontrada");
@@ -69,13 +69,13 @@ namespace APICatalago.Controllers
         }
 
         [HttpGet("pagination")]
-        public ActionResult<IEnumerable<CategoryDTO>> Get([FromQuery] CategoriesParameters categoriesParams)
+        public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetAsync([FromQuery] CategoriesParameters categoriesParams)
         {
-            var categories = _uof.CategoryRepository.GetCategories(categoriesParams);
+            var categories = await _uof.CategoryRepository.GetCategoriesAsync(categoriesParams);
             return GetCategories(categories);
         }
 
-        private ActionResult<IEnumerable<CategoryDTO>> GetCategories(PagedList<Category> categories)
+        private  ActionResult<IEnumerable<CategoryDTO>> GetCategories(PagedList<Category> categories)
         {
             var metadata = new
             {
@@ -92,14 +92,14 @@ namespace APICatalago.Controllers
         }
 
         [HttpGet("filter/name/pagination")]
-        public ActionResult<IEnumerable<CategoryDTO>> GetCategoriesByName([FromQuery]CategoryFilterName categoryFilter)
+        public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategoriesByNameAsync([FromQuery]CategoryFilterName categoryFilter)
         {
-            var categories = _uof.CategoryRepository.GetCategoryByName(categoryFilter); 
+            var categories = await _uof.CategoryRepository.GetCategoryByNameAsync(categoryFilter); 
             return GetCategories(categories);
         }
 
         [HttpPost]
-        public ActionResult<CategoryDTO> InsertCategory(CategoryDTO categoryDTO)
+        public async Task<ActionResult<CategoryDTO>> InsertCategory(CategoryDTO categoryDTO)
         {
             if (categoryDTO is null)
             {
@@ -110,7 +110,7 @@ namespace APICatalago.Controllers
             var category = categoryDTO.toCategory();
 
             var categoryCreated = _uof.CategoryRepository.Create(category);
-            _uof.commit();
+            await _uof.commitAsync();
 
 
             var newCategoryDTO = categoryCreated.ToCategoryDTO();
@@ -130,23 +130,23 @@ namespace APICatalago.Controllers
 
             var category = categoryDTO.toCategory();
             var categoryUpdate = _uof.CategoryRepository.Update(category);
-            _uof.commit();
+            _uof.commitAsync();
             var categoryUpdatedDTO = categoryUpdate.ToCategoryDTO();
 
             return Ok(categoryUpdatedDTO);
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult<CategoryDTO> DeleteCategory(int id)
+        public async Task<ActionResult<CategoryDTO>> DeleteCategory(int id)
         {
-            var category = _uof.CategoryRepository.Get(c => c.CategoryId == id);
+            var category = await _uof.CategoryRepository.GetAsync(c => c.CategoryId == id);
             if (category is null)
             {
                 return NotFound("Categoria não encontrada");
             }
             var excludedCategoryDTO = category.ToCategoryDTO();
             _uof.CategoryRepository.Delete(category);
-            _uof.commit();
+           await _uof.commitAsync();
             return Ok(excludedCategoryDTO);
         }
     }

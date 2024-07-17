@@ -16,22 +16,23 @@ namespace APICatalago.Repositories
 
         }
 
-        public PagedList<Category> GetCategories(CategoriesParameters categoriesParams)
+        public async Task<PagedList<Category>> GetCategoriesAsync(CategoriesParameters categoriesParams)
         {
-            var categories = GetAll().OrderBy(c => c.CategoryId).AsQueryable();
-            var orderedCategories = PagedList<Category>.ToPagedList(categories, categoriesParams.PageNumber, categoriesParams.PageSize);
-            return orderedCategories;
+            var categories = await GetAllAsync();
+            var orderedCategories = categories.OrderBy(c => c.CategoryId).AsQueryable();
+            var result = PagedList<Category>.ToPagedList(orderedCategories, categoriesParams.PageNumber, categoriesParams.PageSize);
+            return result;
         }
 
-        public PagedList<Category> GetCategoryByName(CategoryFilterName categoryParams)
+        public async Task<PagedList<Category>> GetCategoryByNameAsync(CategoryFilterName categoryParams)
         {
-            var category = GetAll().AsQueryable();
+            var category = await GetAllAsync();
             if (!string.IsNullOrEmpty(categoryParams.Name))
             {
                 category = category.Where(c => c.Name.Contains(categoryParams.Name));
             }
 
-            var filteredCategory = PagedList<Category>.ToPagedList(category, categoryParams.PageNumber, categoryParams.PageSize);
+            var filteredCategory = PagedList<Category>.ToPagedList(category.AsQueryable(), categoryParams.PageNumber, categoryParams.PageSize);
             return filteredCategory;
         }
     }
