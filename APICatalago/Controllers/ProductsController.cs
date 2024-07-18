@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using X.PagedList;
 
 namespace APICatalago.Controllers
 {
@@ -107,16 +108,16 @@ namespace APICatalago.Controllers
             return GetProducts(products);
         }
 
-        private ActionResult<IEnumerable<ProductDTO>> GetProducts(PagedList<Product>? products)
+        private ActionResult<IEnumerable<ProductDTO>> GetProducts(IPagedList<Product>? products)
         {
             var metadata = new
             {
-                products.TotalCount,
+                products.Count,
                 products.PageSize,
-                products.CurrentPage,
-                products.TotalPages,
-                products.hasNext,
-                products.hasPrevious
+                products.PageCount,
+                products.TotalItemCount,
+                products.HasNextPage,
+                products.HasPreviousPage
             };
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
             var productsDTO = _mapper.Map<IEnumerable<ProductDTO>>(products);

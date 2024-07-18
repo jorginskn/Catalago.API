@@ -1,0 +1,94 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Projetos\\APICatalago\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{18335B39-FE0B-49D4-8934-E21AE732ECF5}|APICatalago\\APICatalago.csproj|c:\\projetos\\apicatalago\\apicatalago\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{18335B39-FE0B-49D4-8934-E21AE732ECF5}|APICatalago\\APICatalago.csproj|solutionrelative:apicatalago\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{18335B39-FE0B-49D4-8934-E21AE732ECF5}|APICatalago\\APICatalago.csproj|c:\\projetos\\apicatalago\\apicatalago\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{18335B39-FE0B-49D4-8934-E21AE732ECF5}|APICatalago\\APICatalago.csproj|solutionrelative:apicatalago\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{18335B39-FE0B-49D4-8934-E21AE732ECF5}|APICatalago\\APICatalago.csproj|c:\\projetos\\apicatalago\\apicatalago\\repositories\\productrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{18335B39-FE0B-49D4-8934-E21AE732ECF5}|APICatalago\\APICatalago.csproj|solutionrelative:apicatalago\\repositories\\productrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{18335B39-FE0B-49D4-8934-E21AE732ECF5}|APICatalago\\APICatalago.csproj|c:\\projetos\\apicatalago\\apicatalago\\repositories\\iproductrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{18335B39-FE0B-49D4-8934-E21AE732ECF5}|APICatalago\\APICatalago.csproj|solutionrelative:apicatalago\\repositories\\iproductrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CategoriesController.cs",
+              "DocumentMoniker": "C:\\Projetos\\APICatalago\\APICatalago\\Controllers\\CategoriesController.cs",
+              "RelativeDocumentMoniker": "APICatalago\\Controllers\\CategoriesController.cs",
+              "ToolTip": "C:\\Projetos\\APICatalago\\APICatalago\\Controllers\\CategoriesController.cs",
+              "RelativeToolTip": "APICatalago\\Controllers\\CategoriesController.cs",
+              "ViewState": "AQIAAEoAAAAAAAAAAAAIwAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-18T18:22:17.574Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ProductsController.cs",
+              "DocumentMoniker": "C:\\Projetos\\APICatalago\\APICatalago\\Controllers\\ProductsController.cs",
+              "RelativeDocumentMoniker": "APICatalago\\Controllers\\ProductsController.cs",
+              "ToolTip": "C:\\Projetos\\APICatalago\\APICatalago\\Controllers\\ProductsController.cs",
+              "RelativeToolTip": "APICatalago\\Controllers\\ProductsController.cs",
+              "ViewState": "AQIAAGgAAAAAAAAAAAA8wHcAAAAoAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-01T17:51:40.058Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{e8b06f52-6d01-11d2-aa7d-00c04f990343}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "IProductRepository.cs",
+              "DocumentMoniker": "C:\\Projetos\\APICatalago\\APICatalago\\Repositories\\IProductRepository.cs",
+              "RelativeDocumentMoniker": "APICatalago\\Repositories\\IProductRepository.cs",
+              "ToolTip": "C:\\Projetos\\APICatalago\\APICatalago\\Repositories\\IProductRepository.cs",
+              "RelativeToolTip": "APICatalago\\Repositories\\IProductRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAkAAAAiAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-17T17:12:01.36Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ProductRepository.cs",
+              "DocumentMoniker": "C:\\Projetos\\APICatalago\\APICatalago\\Repositories\\ProductRepository.cs",
+              "RelativeDocumentMoniker": "APICatalago\\Repositories\\ProductRepository.cs",
+              "ToolTip": "C:\\Projetos\\APICatalago\\APICatalago\\Repositories\\ProductRepository.cs",
+              "RelativeToolTip": "APICatalago\\Repositories\\ProductRepository.cs",
+              "ViewState": "AQIAACsAAAAAAAAAAAAcwDYAAAAvAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-17T17:11:49.484Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

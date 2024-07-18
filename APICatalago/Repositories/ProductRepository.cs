@@ -2,6 +2,7 @@
 using APICatalago.Models;
 using APICatalago.Pagination;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList;
 
 namespace APICatalago.Repositories
 {
@@ -13,7 +14,7 @@ namespace APICatalago.Repositories
 
         }
 
-        public async Task<PagedList<Product>> GetProductByPriceAsync(ProductFilterPrice productFilterParams)
+        public async Task<IPagedList<Product>> GetProductByPriceAsync(ProductFilterPrice productFilterParams)
         {
             var products = await GetAllAsync();
             if (productFilterParams.Price.HasValue && !string.IsNullOrEmpty(productFilterParams.PriceCriterio))
@@ -31,8 +32,9 @@ namespace APICatalago.Repositories
                     products = products.Where(p => p.Price == productFilterParams.Price);
                 }
             }
-            var filteredProduct = PagedList<Product>.ToPagedList(products.AsQueryable(), productFilterParams.PageNumber, productFilterParams.PageSize);
-            return filteredProduct;
+           // var filteredProduct = PagedList<Product>.ToPagedList(products.AsQueryable(), productFilterParams.PageNumber, productFilterParams.PageSize);
+               var filteredProduct = await products.ToPagedListAsync(productFilterParams.PageNumber, productFilterParams.PageSize);
+                return filteredProduct;
         }
 
 
@@ -50,11 +52,12 @@ namespace APICatalago.Repositories
 
         // }
 
-        public async Task<PagedList<Product>> GetProductsAsync(ProductParameters productParams)
+        public async Task<IPagedList<Product>> GetProductsAsync(ProductParameters productParams)
         {
             var products = await GetAllAsync();
             var orderedCategories = products.OrderBy(p => p.ProductId).ToList();
-            var result = PagedList<Product>.ToPagedList(products.AsQueryable(), productParams.PageNumber, productParams.PageSize);
+          // var result = PagedList<Product>.ToPagedList(products.AsQueryable(), productParams.PageNumber, productParams.PageSize);
+             var result = await orderedCategories.ToPagedListAsync(productParams.PageNumber, productParams.PageSize);
             return result;
 
         }

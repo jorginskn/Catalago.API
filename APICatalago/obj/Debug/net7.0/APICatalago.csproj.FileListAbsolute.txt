@@ -257,3 +257,6 @@ C:\Projetos\APICatalago\APICatalago\obj\Debug\net7.0\refint\APICatalago.dll
 C:\Projetos\APICatalago\APICatalago\obj\Debug\net7.0\APICatalago.pdb
 C:\Projetos\APICatalago\APICatalago\obj\Debug\net7.0\APICatalago.genruntimeconfig.cache
 C:\Projetos\APICatalago\APICatalago\obj\Debug\net7.0\ref\APICatalago.dll
+C:\Projetos\APICatalago\APICatalago\bin\Debug\net7.0\JetBrains.Annotations.dll
+C:\Projetos\APICatalago\APICatalago\bin\Debug\net7.0\X.PagedList.dll
+C:\Projetos\APICatalago\APICatalago\bin\Debug\net7.0\X.PagedList.Mvc.Core.dll

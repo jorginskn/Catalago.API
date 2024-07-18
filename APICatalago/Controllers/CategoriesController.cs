@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using X.PagedList;
 
 namespace APICatalago.Controllers
 {
@@ -75,16 +76,16 @@ namespace APICatalago.Controllers
             return GetCategories(categories);
         }
 
-        private  ActionResult<IEnumerable<CategoryDTO>> GetCategories(PagedList<Category> categories)
+        private  ActionResult<IEnumerable<CategoryDTO>> GetCategories(IPagedList<Category> categories)
         {
             var metadata = new
             {
-                categories.TotalCount,
+                categories.Count,
                 categories.PageSize,
-                categories.CurrentPage,
-                categories.TotalPages,
-                categories.hasNext,
-                categories.hasPrevious
+                categories.PageCount,
+                categories.TotalItemCount,
+                categories.HasNextPage,
+                categories.HasPreviousPage
             };
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             var categoriesDTO = categories.toCategorytDTOList();
@@ -93,7 +94,7 @@ namespace APICatalago.Controllers
 
         [HttpGet("filter/name/pagination")]
         public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategoriesByNameAsync([FromQuery]CategoryFilterName categoryFilter)
-        {
+         {
             var categories = await _uof.CategoryRepository.GetCategoryByNameAsync(categoryFilter); 
             return GetCategories(categories);
         }
