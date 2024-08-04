@@ -4,6 +4,7 @@ using APICatalago.Extensions;
 using APICatalago.Filters;
 using APICatalago.Logging;
 using APICatalago.Repositories;
+using Microsoft.AspNetCore.Identity;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +34,10 @@ builder.Services.AddCors(options =>
 // Configuração de serviços adicionais
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
+builder.Services.AddAuthentication("Bearer").AddJwtBearer();
 builder.Services.AddSqlServer<AppDbContext>(builder.Configuration["ConnectionStrings:DefaultConnection"]);
 builder.Services.AddScoped<ApiLoggingFilter>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
