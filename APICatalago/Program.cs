@@ -9,6 +9,7 @@ using APICatalago.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -24,46 +25,72 @@ builder.Services.AddControllers(options =>
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     }).AddNewtonsoftJson();
 
-// Configuração de CORS para permitir todas as origens, métodos e cabeçalhos
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-        });
+   options.AddPolicy("AllowAll",
+       builder =>
+       {
+           builder.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+       });
 });
 
 // Configuração de serviços adicionais
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "APICatalago", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Bearer JWT"
+
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] { }
+        }
+    });
+});
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
-builder.Services.AddAuthentication("Bearer").AddJwtBearer();
+
 builder.Services.AddSqlServer<AppDbContext>(builder.Configuration["ConnectionStrings:DefaultConnection"]);
 var secretKey = builder.Configuration["JWT:SecretKey"] ?? throw new ArgumentNullException("Invalid secret key!!");
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.SaveToken = true;
-    options.RequireHttpsMetadata = false;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
-        ValidAudience = builder.Configuration["JWT:ValidAudience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
-    };
-});
+})
+  .AddJwtBearer(options =>
+  {
+      options.TokenValidationParameters = new TokenValidationParameters
+      {
+          ValidateIssuer = true,
+          ValidateAudience = true,
+          ValidateLifetime = true,
+          ValidateIssuerSigningKey = true,
+          ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+          ValidAudience = builder.Configuration["JWT:ValidAudience"],
+          IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]))
+      };
+  });
+
 
 builder.Services.AddScoped<ApiLoggingFilter>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -84,18 +111,13 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.ConfigureExceptionHandler(); // Assumindo que este método configura o manuseio de exceções customizado
 }
 
-app.UseHttpsRedirection();
 
-// Aplicar o middleware de CORS
 app.UseCors("AllowAll");
+app.UseHttpsRedirection();
+app.UseAuthentication(); // Adicione esta linha para usar o middleware de autenticação
 
-// Aplicar middleware de autorização
 app.UseAuthorization();
-
-// Mapeamento de controladores
 app.MapControllers();
-
 app.Run();
